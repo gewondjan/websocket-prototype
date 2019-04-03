@@ -14,7 +14,10 @@ var wsApp = expressWs(app);
 
 app.use('/', express.static(path.join(__dirname, 'public')));
 
-app.use(bodyParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'webSocketTest.html'));
@@ -25,17 +28,18 @@ app.get('/getPosts', async (req, res) => {
     res.send(posts);
 });
 
-
 app.post('/updateLike', async (req, res) => {
     console.log(req.body.id);
     await dbAccess.increaseLikesByOne(req.body.id);
-    res.send();
+    res.send({id: req.body.id});
 });
 
 //Need this variable to broadcast
 var testWss = wsApp.getWss('/test');
 app.ws('/test', (ws, req) => {
     ws.on('message', (message) => {
+        
+        
         testWss.clients.forEach((client) => {
             client.send("Got the message");
         })

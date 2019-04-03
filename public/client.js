@@ -1,5 +1,7 @@
 
-function getPosts() {
+function setUp() {
+
+    //Get the posts
     $.ajax({
         method: 'GET',
         url: '/getPosts',
@@ -9,11 +11,20 @@ function getPosts() {
             data = JSON.parse(data);
             $('#posts').empty();
             data.forEach((post) => {
-                $('#posts').append(`<li id='${post.id}'>${post.content} - Likes: ${post.likes} <button onclick='addLike(${post.id})'>Like</button></li>`);
+                //For post request
+                $('#posts').append(`<li id='${post.id}'>${post.content} - Likes: <span id='like-count-${post.id}'>${post.likes}</span> <button id='like-${post.id}' onclick='addLike(${post.id})'>Like</button></li>`);                
+                //For websockets
+                // $('#posts').append(`<li id='${post.id}'>${post.content} - Likes: <span id='like-count-${post.id}'>${post.likes}</span> <button id='like-${post.id}'>Like</button></li>`);
             });
+            // setUpWebSocket(data);
         }
     });
 
+}
+
+function updateLikes(id) {
+    var likeCount = Number($(`#like-count-${id}`).html());
+    $(`#like-count-${id}`).html(likeCount + 1);
 }
 
 function addLike(id) {
@@ -24,19 +35,15 @@ function addLike(id) {
             id: id
         },
         success: function(data) {
-            getPosts();
+            updateLikes(data.id);
         }
     });
 }
 
 
-function setUp() {
-    getPosts();
-    setUpWebSocket();   
-}
 
 
-function setUpWebSocket() {
+function setUpWebSocket(arrayOfPosts) {
 
     var socket = new WebSocket(`ws://${window.location.href.split('//')[1]}test`);
 
@@ -45,10 +52,22 @@ function setUpWebSocket() {
         $('#sendWebSocketMessage').on('click', (event) => {
             sendSocketMessage(socket, 'Testing');
         });
+
+        //Set up event listeners for each of the like buttons
+
+        arrayOfPosts.forEach((post) => {
+            $(`like-${post.id}`).on('click', (event) => {
+                sendSocketMessage(socket, post.id);
+            });
+        console.log('Like buttons are ready');
+        });
+
+
     }
 
     socket.onmessage = function(event) {
-        alert(event.data);
+        //Send the id to updateLikes function
+        updateLikes(event.data);
     }
 
     socket.onerror = function(event) {
