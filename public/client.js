@@ -12,11 +12,11 @@ function setUp() {
             $('#posts').empty();
             data.forEach((post) => {
                 //For post request
-                $('#posts').append(`<li id='${post.id}'>${post.content} - Likes: <span id='like-count-${post.id}'>${post.likes}</span> <button id='like-${post.id}' onclick='addLike(${post.id})'>Like</button></li>`);                
+                // $('#posts').append(`<li id='${post.id}'>${post.content} - Likes: <span id='like-count-${post.id}'>${post.likes}</span> <button id='like-${post.id}' onclick='addLike(${post.id})'>Like</button></li>`);                
                 //For websockets
-                // $('#posts').append(`<li id='${post.id}'>${post.content} - Likes: <span id='like-count-${post.id}'>${post.likes}</span> <button id='like-${post.id}'>Like</button></li>`);
+                $('#posts').append(`<li id='${post.id}'>${post.content} - Likes: <span id='like-count-${post.id}'>${post.likes}</span> <button id='like-${post.id}'>Like</button></li>`);
             });
-            // setUpWebSocket(data);
+            setUpWebSocket(data);
         }
     });
 
@@ -62,7 +62,6 @@ function setUpWebSocket(arrayOfPosts) {
         console.log('Like buttons are ready');
         });
 
-        
 
     }
 
