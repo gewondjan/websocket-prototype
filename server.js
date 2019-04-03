@@ -37,7 +37,8 @@ app.post('/updateLike', async (req, res) => {
 //Need this variable to broadcast
 var testWss = wsApp.getWss('/test');
 app.ws('/test', (ws, req) => {
-    ws.on('message', (idOfLikeToChange) => {
+    ws.on('message', async (idOfLikeToChange) => {
+        await dbAccess.increaseLikesByOne(idOfLikeToChange);
         testWss.clients.forEach((client) => {
             client.send(idOfLikeToChange);
         })

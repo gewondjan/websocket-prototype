@@ -11,8 +11,10 @@ exports.getPosts = function getPosts() {
     myPool = getPool();
     return myPool.query('SELECT * FROM posts ORDER BY id')
         .then((results) => {
+            if (myPool.ending === false) {
+                myPool.end();
+            }
             return JSON.stringify(results.rows);
-            myPool.end();
         }).catch(e => {
             console.log(e.message);
         });
@@ -22,7 +24,9 @@ exports.increaseLikesByOne = function increaseLikesByOne(id) {
     myPool = getPool();
     return myPool.query('UPDATE posts SET likes = likes + 1 WHERE id = $1', [id])
     .then(() => {
-        myPool.end();
+        if (myPool.ending === false) {
+            myPool.end();
+        }
     }).catch(e => e.message);
 }
 

@@ -56,7 +56,7 @@ function setUpWebSocket(arrayOfPosts) {
         //Set up event listeners for each of the like buttons
 
         arrayOfPosts.forEach((post) => {
-            $(`like-${post.id}`).on('click', (event) => {
+            $(`#like-${post.id}`).on('click', (event) => {
                 sendSocketMessage(socket, post.id);
             });
         console.log('Like buttons are ready');
