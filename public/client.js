@@ -62,6 +62,7 @@ function setUpWebSocket(arrayOfPosts) {
         console.log('Like buttons are ready');
         });
 
+        
 
     }
 
